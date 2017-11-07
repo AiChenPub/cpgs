@@ -32,7 +32,7 @@ def config_option():
         '-o','--outdir',dest='outdir',action='store',
         help='')
     opt, args = p.parse_args()
-    return p,opt,args 
+    return p,opt,args
 
 #################################
 ##### run individual methods ####
@@ -43,9 +43,8 @@ print opt.expfile,opt.phefile,opt.datatype,opt.outdir
 if len(sys.argv) == 1:
     opt_parser.print_help()
     sys.exit(1)
-
-cmdline = 'Rscript '+cgps_home+'/scripts/combined_methods.R '+ ' '.join([cgps_home,opt.expfile, opt.phefile, opt.datatype, opt.species, opt.outdir])
-
+cmdline = 'Rscript '+cgps_home+'/src/combined_methods.R '+ ' '.join([cgps_home,opt.expfile, opt.phefile, opt.datatype, opt.spe, opt.outdir])
+print cmdline
 subprocess.Popen(cmdline)
 
 ################################
@@ -99,7 +98,7 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile):
         'gsea',
         'padog',
         'plage',
-        'safe']  
+        'safe']
 
 
     ## read gene sets ###
@@ -125,8 +124,8 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile):
         else:
             pval = 'P.VALUE'
         tbl[md]['rank'] = (np.arange(tbl[md].shape[0]) + 1.0) / gset_df.shape[0]  ### divide the total of the gene sets invert to rank percent
-        md_rank[md] = pd.DataFrame({'GENE_SET': tbl[md]['GENE.SET'], (md+'_pval'):tbl[md][pval],(md+'_rank'):tbl[md]['rank'] })        
-        rank_tb = rank_tb.merge(md_rank[md], left_on = 'GENE.SET', right_on = 'GENE_SET', how = 'outer')       
+        md_rank[md] = pd.DataFrame({'GENE_SET': tbl[md]['GENE.SET'], (md+'_pval'):tbl[md][pval],(md+'_rank'):tbl[md]['rank'] })
+        rank_tb = rank_tb.merge(md_rank[md], left_on = 'GENE.SET', right_on = 'GENE_SET', how = 'outer')
         rank_tb = rank_tb.drop('GENE_SET',axis=1)
     rank_arr = rank_tb.iloc[:,2:]
     rank_arr = rank_arr.fillna(1.0)
