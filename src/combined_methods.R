@@ -16,7 +16,6 @@ dtype <- args[4]  # read count
 spe <- args[5]
 outdir <- args[6]
 
-setwd(cgpshome)
 
 ########################
 ### source the codes ###
@@ -24,11 +23,11 @@ setwd(cgpshome)
 
 source('./src/individual_methods.R')
 
-gmtf <- paste0('data/kegg.',spe,'.gmt')
-grnf <- paste0('data/kegg.',spe,'.grn.tsv')
+gmtf <- file.path(cgpshome,paste0('data/kegg.',spe,'.gmt'))
+grnf <- file.path(cgpshome,paste0('data/kegg.',spe,'.grn.tsv'))
 if (file.exists(gmtf) & file.exists(grnf)){
-  read.gs.from.file(gmtf)
-  read.grn.from.file(grnf)
+  gene.sets <- read.gs.from.file(gmtf)
+  grn <- read.grn.from.file(grnf)
 } else{
   rs <- get.gs.grn.from.kegg(spe)
   gene.sets <- rs$gsl

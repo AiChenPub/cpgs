@@ -12,14 +12,15 @@ library(dplyr)
 
 get.gs.grn.from.kegg <- function(spe){
     ### either use file or use spe to get KEGG PATHWAY ###
-    message(paste("loading KEGG PATHWAY of",spe,"\n"))
+    message(paste("### Loading KEGG PATHWAY of",spe,"\n"))
     pwys <- EnrichmentBrowser::download.kegg.pathways(spe)
     grn <- EnrichmentBrowser::compile.grn.from.kegg(pwys)
     gsl <- EnrichmentBrowser::get.kegg.genesets(pwys)
     return (list(gsl=gsl, grn=grn))
 }
 read.gs.from.file <- function(gmtfile){
-  if(file.exists(gmtfile)) stop(paste0(gmtfile," file not exist.","\n"))
+  message("### Read Gene Set File 'GMT' file. \n")
+  if(!file.exists(gmtfile)) stop(paste0(gmtfile," file not exist.","\n"))
   tb <- read.delim(gmtfile)
   gsl <- lapply(seq_len(nrow(tb)), FUN=function(x){return (as.character(tb[x,]))})
   names(gsl) = rownames(tb)
@@ -27,9 +28,9 @@ read.gs.from.file <- function(gmtfile){
 }
   
 # write genesets to file in GMT format
-write.gmt <- function(gs, gmt.file)
+write.gmt <- function(gs, gmtfile)
 { 
-    message(paste("Writing KEGG PATHWAY as file ",gmtfile,"\n" ))
+    message(paste("## Writing KEGG PATHWAY as file ",gmtfile,"\n" ))
     ## collapse geneset members to one tab separated string 
     gs.strings <- sapply(gs, function(x) paste(x,collapse="\t"))
 
@@ -44,11 +45,11 @@ write.gmt <- function(gs, gmt.file)
     all.str <- paste(all, "\n", sep="")
 
     ## write the gs in gmt format
-    cat(all.str, file=gmt.file, sep="")
+    cat(all.str, file=gmtfile, sep="")
 }
 read.grn.from.file <- function(grnfile){
-    message("Read gene regulatory network\n")
-    if(file.exists(gmtfile)) stop(paste0(gmtfile," file not exist.","\n"))
+    message("### Read gene regulatory network\n")
+    if(!file.exists(grnfile)) stop(paste0(grnfile," file not exist.","\n"))
     grn <- read.delim(grnfile, stringsAsFactors=F)
     grn$FROM <- as.character(grn$FROM)
     grn$TO <- as.character(grn$TO)
@@ -56,7 +57,7 @@ read.grn.from.file <- function(grnfile){
     return (grn)
 }
 write.grn <- function(grn, grnfile){
-    message(paste("Writing KEGG PATHWAY regulatory network as file",grnfile))
+    message(paste("###Writing KEGG PATHWAY regulatory network as file",grnfile))
     write.table(grn,file=paste0(grnfile),sep="\t")
 
 }
