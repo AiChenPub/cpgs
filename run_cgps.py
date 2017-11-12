@@ -1,3 +1,12 @@
+'''
+CGPS pipeline
+Copyright (c) 2017, Chen Ai
+This code is free software; you can redistribute it and/or modify it
+under the terms of the BSD License (see the file COPYING included with
+the distribution).
+@ version: experimental
+@ author: Chen Ai
+'''
 import sys, os
 import subprocess
 from optparse import OptionParser

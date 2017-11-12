@@ -1,0 +1,7 @@
+name: cgps
+dependencies:
+    - python=2
+    - numpy
+    - pandas
+    - scipy
+    - scikit-learn
