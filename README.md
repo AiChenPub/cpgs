@@ -29,7 +29,9 @@ The nine methods are two network-based method, CEPA and GANPA; and seven set-bas
   Open the cgpsrc file, rite CGPS directory after '=', and copy this file into your $HOME directory as '.cgpsrc'
 ### Run CGPS
 1. To run the pipeline, you should always activate cgps environment except you have all dependent softwares installed.
+```bash
  source activate cgps
+ ```
 2. Prepare the input data. 
   * EXP file: expression data file. A tab delimited text file format that contains expression values. Columns correspond to samples, rows correspond to genes. Header='Genes' and sample names , Row names = gene ID. 
   * PHE file: sample class file. Sample class label, separated by the new lines. Each sample label should be corresponding with each sample in the expression matrix (from 2nd column to the last column of the matrix).
@@ -38,15 +40,15 @@ The nine methods are two network-based method, CEPA and GANPA; and seven set-bas
   * Data type: 'ma' for microarray, 'rseq' for RNA-Seq.
 3. Run CGPS 
 ```bash
-python run_cgps.py -e \[expfile\] -p \[phefile\] -s \[species\] -d \[ma\] -o \[outdir\]
+python run_cgps.py -e [expfile] -p [phefile] -s [species] -d [ma] -o [outdir]
 ```
 
 >Notes: 
-1. Only support KEGG PATHWAY now, unless you provide GMT file.
-2. Only support NCBI ENTREZ GENE ID unless GMT file is provided. The type of gene ID in GMT file must match with that in EXP file.
+1. Only support KEGG PATHWAY now.
+2. Only support NCBI ENTREZ GENE ID. The type of gene ID in GMT file must match with that in EXP file.
 
 ### Example:
+```bash
 mkdir test/res
 python run_cgps.py -e ./test/ALL_entrez.exp.txt -p ./test/ALL_BcrAbl_NEG.phe.txt -d ma -s hsa -o ./test/res
-
-
+```
