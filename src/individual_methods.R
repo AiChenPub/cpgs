@@ -19,12 +19,17 @@ get.gs.grn.from.kegg <- function(spe){
     return (list(gsl=gsl, grn=grn))
 }
 read.gs.from.file <- function(gmtfile){
-  message("### Read Gene Set File 'GMT' file. \n")
-  if(!file.exists(gmtfile)) stop(paste0(gmtfile," file not exist.","\n"))
-  tb <- read.delim(gmtfile)
-  gsl <- lapply(seq_len(nrow(tb)), FUN=function(x){return (as.character(tb[x,]))})
-  names(gsl) = rownames(tb)
-  return (gsl)
+    message("### Read Gene Set File 'GMT' file. \n")
+    if(!file.exists(gmtfile)) stop(paste0(gmtfile," file not exist.","\n"))
+    conn <- gmtfile
+    linn <- readLines(conn)
+    gsl <- list()
+    for (i in 1:length(linn)){
+        rec <- unlist(strsplit(linn[i], split="\t"))
+        gsl[[i]] <- rec[seq(from=3,to=length(rec))]
+        names(gsl)[i] <- rec[1]
+      }
+    return (gsl)
 }
   
 # write genesets to file in GMT format

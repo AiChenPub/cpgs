@@ -45,13 +45,12 @@ if len(sys.argv) == 1:
     sys.exit(1)
 cmdline = 'Rscript '+cgps_home+'/src/combined_methods.R '+ ' '.join([cgps_home,opt.expfile, opt.phefile, opt.datatype, opt.spe, opt.outdir])
 print cmdline
-subprocess.Popen(cmdline)
-
+subprocess.call(cmdline,shell=True)
 ################################
 ###### Predict by CGPS #########
 ################################
-
-def read_gmt_file(gmt=gmtf):
+print '### R program OK'
+def read_gmt_file(gmt):
     gset_des={}    #description of gene sets
     gset_genes = {}  # genes of gene sets
     gmt_file = open(gmt,'r')
@@ -150,6 +149,6 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile):
 
 gmtf = cgps_home + '/data/kegg.'+opt.spe+'.gmt'
 svmfile = cgps_home + '/data/cgps_model.pkl'
-outdir = cgps_home + '/test/res/'
-run_svm_18dims(opt.outdir,gmtf,opt.outdir,svmfile)
+outdir = opt.outdir + '/'
+run_svm_18dims(outdir,gmtf,outdir,svmfile)
 
