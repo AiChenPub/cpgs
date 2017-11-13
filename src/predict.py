@@ -3,6 +3,15 @@ import sys,os
 import numpy as np
 import pandas as pd
 
+def get_dir():
+    srcf = os.environ['HOME']+'/.cgpsrc'
+    if not os.path.isfile(srcf):
+        sys.exit('please add .cgpsrc under HOME folder\n')
+    with open(srcf,'r') as f:
+        tmp = f.readline()
+    cgps_home = tmp.split('=')[1].strip()
+    return cgps_home
+
 def read_gmt_file(gmt):
     gset_des={}    #description of gene sets
     gset_genes = {}  # genes of gene sets
@@ -32,12 +41,7 @@ def read_gmt_file(gmt):
         sys.exit(e)
     return gset_des, gset_genes
 
-
-    #datadir = #save all 9 methods results
-    #gmtf = # gmt file
-    #svmfile =  # svm file
-
-def run_svm_18dims(datadir,gmtf,outdir,svmfile='./data/cgps_model.pkl'):
+def run_svm_18dims(datadir,gmtf,outdir,svmfile):
     ### read svm model
     from sklearn.externals import joblib
     svc = joblib.load(svmfile)
@@ -50,9 +54,7 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile='./data/cgps_model.pkl'):
         'gsea',
         'padog',
         'plage',
-        'safe']  
-
-
+        'safe']
     ## read gene sets ###
     gmt_dict = {}
     gset_des, gset_genes = read_gmt_file(gmtf)
@@ -76,8 +78,8 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile='./data/cgps_model.pkl'):
         else:
             pval = 'P.VALUE'
         tbl[md]['rank'] = (np.arange(tbl[md].shape[0]) + 1.0) / gset_df.shape[0]  ### divide the total of the gene sets invert to rank percent
-        md_rank[md] = pd.DataFrame({'GENE_SET': tbl[md]['GENE.SET'], (md+'_pval'):tbl[md][pval],(md+'_rank'):tbl[md]['rank'] })        
-        rank_tb = rank_tb.merge(md_rank[md], left_on = 'GENE.SET', right_on = 'GENE_SET', how = 'outer')       
+        md_rank[md] = pd.DataFrame({'GENE_SET': tbl[md]['GENE.SET'], (md+'_pval'):tbl[md][pval],(md+'_rank'):tbl[md]['rank'] })
+        rank_tb = rank_tb.merge(md_rank[md], left_on = 'GENE.SET', right_on = 'GENE_SET', how = 'outer')
         rank_tb = rank_tb.drop('GENE_SET',axis=1)
     rank_arr = rank_tb.iloc[:,2:]
     rank_arr = rank_arr.fillna(1.0)
@@ -92,19 +94,22 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile='./data/cgps_model.pkl'):
     rank_out = rank_tb.iloc[:,:2]    ### first 2 columns: gene set id, gene set description
     tmp = pd.DataFrame(np.column_stack([comb_dis,comb_cls,comb_prb]))
     tmp.columns = ['distance','class','prob']  ### 3-5 column: class,distance, probability ,
-    rank_out['ENT'] = tmp.loc[:,'class']==1
+    rank_out.loc[:,'ENT'] = tmp.loc[:,'class']==1
     rank_out = pd.concat([rank_out, tmp.loc[:,['distance','prob']]], axis=1, ignore_index=True)
 
     rank_out.columns = ['GENE_SET','NAME','ENRICH_CLASS','R_SCORE','PROBABILITY']
     rank_out = rank_out.sort_values('R_SCORE', ascending=False)
+    rank_out = rank_out.loc[:,['GENE_SET','NAME','R_SCORE']]
     rank_out.to_csv( outdir +'combination_results.tsv',  sep="\t", header=True, index=False)
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:
         print "python "+ sys.argv[0] + "datadir  outdir "
     datadir = sys.argv[1]
+    cgps_home = get_dir()
     #save all 9 methods results
-    gmtf = './data/kegg.pathway.hsa.320.gmt'
+    gmtf = cgps_home + '/data/kegg.pathway.hsa.320.gmt'
+    svmfile = cgps_home + '/data/cgps_model.pkl'
     # gmt file
     outdir = sys.argv[2]
-    run_svm_18dims(datadir,gmtf,outdir)
+    run_svm_18dims(datadir,gmtf,outdir,svmfile)

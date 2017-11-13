@@ -108,7 +108,6 @@ def run_svm_18dims(datadir,gmtf,outdir,svmfile):
         'plage',
         'safe']
 
-
     ## read gene sets ###
     gmt_dict = {}
     gset_des, gset_genes = read_gmt_file(gmtf)
